@@ -7,3 +7,10 @@ type Person struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 }
+
+// ErrorResponse описывает стандартизированный ответ об ошибке
+type ErrorResponse struct {
+	StatusCode int    `json:"status_code"`
+	Error      string `json:"error"`
+	Message    string `json:"message,omitempty"`
+}

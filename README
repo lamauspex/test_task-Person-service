@@ -1,5 +1,6 @@
+
 Simple Person Service 
-Простой RESTful CRUD-сервис для управления моделью Person с использованием SQLite базы данных и фреймворка Echo.
+Простой RESTful CRUD-сервис для управления моделью Person с использованием PostgeSQL базы данных и фреймворка Echo.
 
 
 Описание проекта 
@@ -10,47 +11,56 @@ Simple Person Service
 Архитектура 
 Проект организован следующим образом:
 
+├── docs/
+│
 ├── internal/
+│   │
 │   ├── app/
-│   │   ├── person_model.go # Модель сущности Person
+│   │   ├── person_model.go
 │   │   └── tests/
-│   │       ├── person_test.go # Тесты для модели Person
+│   │       └── person_test.go
+│   │
 │   ├── db/
-│   │   ├── person_repository.go # Репозиторий для взаимодействия с базой данных
+│   │   ├── postgre_person_repo.go
 │   │   └── tests/
-│   │       ├── repo_test.go # Интеграционные тесты для репозитория
+│   │       └── repo_test.go
+│   │
 │   ├── logic/
-│   │   ├── person_logic.go # Логика обработки запросов к модели Person
+│   │   ├── person_logic.go
 │   │   └── tests/
-│   │       ├── service_test.go # Юнит-тесты для логического уровня
+│   │       └── service_test.go
+│   │
+│   ├── middleware/
+│   │   └──loger_middleware.go
+│   │
 │   ├── http/
-│   │   ├── person_handler.go # Обработчики HTTP-запросов
-│   │   └── tests/
-│   │       ├── api_test.go # Функциональные тесты API
-│   ├── tests/
-│   │   ├── test_utils.go # Вспомогательные утилиты для тестов
-│   └── e2e_tests/
-│       ├── api_test.go # End-to-end тестирование API
-├── vendor/
+│   │   └── person_handler.go
+│   │
+│   └── tests/
+│       └── test_utils.go
+│
+├── migrations/
+│
 ├── go.mod
 ├── go.sum
 ├── main.go
-└── person.db
+├── .env
+└── README
 
 
 Структура приложения 
 Model: Представлена структурой Person, содержащей ID, Email, Phone, First Name и Last Name.
 Handlers: HTTP-обработчики реализованы с использованием фреймворка Echo.
 Logic: Реализована логика для каждой операции CRUD.
-Repository: Используется слой доступа к данным, позволяющий абстрагироваться от конкретной СУБД (SQLite).
+Repository: Используется слой доступа к данным, позволяющий абстрагироваться от конкретной СУБД (PostgeSQL).
 
 
 Установка 
 Для установки и запуска проекта следуйте инструкциям ниже:
 
-Предустановленные требования:
-Go версии >= 1.18
-SQLite
+В файле .env замените DB_PASSWORD=YOUR_DB_PASSWORD_HERE на действующий пароль
+
+
 Установка зависимостей:
 
 go mod download
@@ -58,13 +68,16 @@ go mod download
 
 Клонирование репозитория:
 
-git clone https://github.com/lamauspex/person_service.git
+git clone https://github.com/lamauspex/Person_service
 cd person_service
 
 
 Запуск 
 
 go run main.go
+
+
+Swagger API http://localhost:8080/swagger/index.html
 
 
 Доступные endpoints 

@@ -1,0 +1,179 @@
+definitions:
+  app.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  app.Person:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      phone:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /persons:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех пользователей с поддержкой пагинации и поиска
+      parameters:
+      - description: Максимальное количество записей на одной странице
+        in: query
+        name: limit
+        type: integer
+      - description: Позиция начальной записи
+        in: query
+        name: offset
+        type: integer
+      - description: Строка поиска по имени или фамилии
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/app.Person'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+      summary: Получение списка всех пользователей
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Создает новую запись пользователя в базе данных
+      parameters:
+      - description: Информация о новом пользователе
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/app.Person'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/app.Person'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+      summary: Создание нового пользователя
+      tags:
+      - Users
+  /persons/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Полностью удаляет пользователя по его идентификатору
+      parameters:
+      - description: Идентификатор пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+      summary: Удаление пользователя
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Возвращает информацию о конкретном пользователе по его ID
+      parameters:
+      - description: Идентификатор пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Person'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+      summary: Получение пользователя по идентификатору
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о существующем пользователе
+      parameters:
+      - description: Идентификатор пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Обновленная информация о пользователе
+        in: body
+        name: person
+        required: true
+        schema:
+          $ref: '#/definitions/app.Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.Person'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/app.ErrorResponse'
+      summary: Обновление информации о пользователе
+      tags:
+      - Users
+swagger: "2.0"

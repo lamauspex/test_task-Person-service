@@ -5,17 +5,19 @@ import (
 	"MyProjects/person_service/internal/db"
 	"MyProjects/person_service/internal/logic"
 	"MyProjects/person_service/internal/tests"
+	"context"
 	"testing"
 )
 
-// TestAddPerson проверяет успешность добавления нового пользователя
+// Тест AddPerson Добавить пользователя
 func TestAddPerson(t *testing.T) {
 	// Подготовка тестовой базы данных
 	testDb := tests.PrepareTestDatabase(t)
 	defer tests.CleanUp(testDb, t)
-	repo := db.NewSqlitePersonRepo(testDb)
+	repo := db.NewPostgresPersonRepo(testDb)
 	service := logic.NewDefaultPersonService(repo)
 
+	// Новый экземпляр пользователя
 	newPerson := &app.Person{
 		Email:     "new_user@test.ru",
 		Phone:     "+79876543210",
@@ -23,15 +25,18 @@ func TestAddPerson(t *testing.T) {
 		LastName:  "Семенов",
 	}
 
-	// Выполняем операцию добавления пользователя
-	err := service.AddPerson(newPerson)
+	// Контекст необходим для вызова сервисов
+	ctx := context.Background()
+
+	// Добавляем пользователя
+	err := service.AddPerson(ctx, newPerson)
 	tests.MustFailIfError(t, err)
 
-	// Проверяем наличие пользователя в базе данных
-	fetchedPerson, err := service.GetPerson(newPerson.ID)
+	// Получаем сохранённого пользователя по новому ID
+	fetchedPerson, err := service.GetPerson(ctx, newPerson.ID)
 	tests.MustFailIfError(t, err)
 
-	// Убеждаемся, что информация совпадает
+	// Проверка правильности сохранения данных
 	if fetchedPerson.Email != newPerson.Email ||
 		fetchedPerson.Phone != newPerson.Phone ||
 		fetchedPerson.FirstName != newPerson.FirstName ||
@@ -40,22 +45,23 @@ func TestAddPerson(t *testing.T) {
 	}
 }
 
-// TestGetPerson проверяет успешность получения пользователя по ID
+// Тест GetPerson Получить пользователя по ID
 func TestGetPerson(t *testing.T) {
 	// Подготовка тестовой базы данных
 	testDb := tests.PrepareTestDatabase(t)
 	defer tests.CleanUp(testDb, t)
-	repo := db.NewSqlitePersonRepo(testDb)
+	repo := db.NewPostgresPersonRepo(testDb)
 	service := logic.NewDefaultPersonService(repo)
 
 	// Создание фиктивного пользователя
 	fakePerson := tests.InsertFakePerson(testDb, t)
 
 	// Запрашиваем пользователя по ID
-	gottenPerson, err := service.GetPerson(fakePerson.ID)
+	ctx := context.Background()
+	gottenPerson, err := service.GetPerson(ctx, fakePerson.ID)
 	tests.MustFailIfError(t, err)
 
-	// Проверяем совпадение полей
+	// Проверяем правильность полученных данных
 	if gottenPerson.Email != fakePerson.Email ||
 		gottenPerson.Phone != fakePerson.Phone ||
 		gottenPerson.FirstName != fakePerson.FirstName ||
@@ -64,32 +70,33 @@ func TestGetPerson(t *testing.T) {
 	}
 }
 
-// TestUpdatePerson проверяет успешность обновления пользователя
+// Тест UpdatePerson Обновление пользователя
 func TestUpdatePerson(t *testing.T) {
 	// Подготовка тестовой базы данных
 	testDb := tests.PrepareTestDatabase(t)
 	defer tests.CleanUp(testDb, t)
-	repo := db.NewSqlitePersonRepo(testDb)
+	repo := db.NewPostgresPersonRepo(testDb)
 	service := logic.NewDefaultPersonService(repo)
 
 	// Создание фиктивного пользователя
 	fakePerson := tests.InsertFakePerson(testDb, t)
 
-	// Изменённые данные пользователя
+	// Новые данные пользователя
 	updatedData := &app.Person{
 		ID:        fakePerson.ID,
 		Email:     "updated_email@test.ru",
 		Phone:     "+79876543210",
 		FirstName: "Иван",
-		LastName:  "Новиков",
+		LastName:  "Иванушка",
 	}
 
 	// Обновляем пользователя
-	err := service.EditPerson(fakePerson.ID, updatedData)
+	ctx := context.Background()
+	err := service.EditPerson(ctx, fakePerson.ID, updatedData)
 	tests.MustFailIfError(t, err)
 
-	// Проверяем изменение данных
-	updatedPerson, err := service.GetPerson(fakePerson.ID)
+	// Проверяем обновление данных
+	updatedPerson, err := service.GetPerson(ctx, fakePerson.ID)
 	tests.MustFailIfError(t, err)
 
 	if updatedPerson.Email != updatedData.Email ||

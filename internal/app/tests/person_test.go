@@ -4,6 +4,7 @@ import (
 	"MyProjects/person_service/internal/app"
 	"MyProjects/person_service/internal/db"
 	"MyProjects/person_service/internal/tests"
+	"context"
 	"reflect"
 	"testing"
 )
@@ -13,7 +14,7 @@ func TestCreatePerson(t *testing.T) {
 	dbConn := tests.PrepareTestDatabase(t)
 	defer tests.CleanUp(dbConn, t)
 
-	repo := db.NewSqlitePersonRepo(dbConn)
+	repo := db.NewPostgresPersonRepo(dbConn)
 
 	testPerson := &app.Person{
 		Email:     "john.doe@example.com",
@@ -22,10 +23,11 @@ func TestCreatePerson(t *testing.T) {
 		LastName:  "Doe",
 	}
 
-	err := repo.Create(testPerson)
+	// Передаём контекст
+	err := repo.Create(context.Background(), testPerson)
 	tests.MustFailIfError(t, err)
 
-	foundPerson, err := repo.FindByID(testPerson.ID)
+	foundPerson, err := repo.FindByID(context.Background(), testPerson.ID)
 	tests.MustFailIfError(t, err)
 
 	if !reflect.DeepEqual(foundPerson, testPerson) {
@@ -38,7 +40,7 @@ func TestUpdatePerson(t *testing.T) {
 	dbConn := tests.PrepareTestDatabase(t)
 	defer tests.CleanUp(dbConn, t)
 
-	repo := db.NewSqlitePersonRepo(dbConn)
+	repo := db.NewPostgresPersonRepo(dbConn)
 
 	// Вставляем исходную запись
 	fakePerson := tests.InsertFakePerson(dbConn, t)
@@ -52,11 +54,12 @@ func TestUpdatePerson(t *testing.T) {
 		LastName:  "Smith",
 	}
 
-	err := repo.Update(fakePerson.ID, updatedPerson)
+	// Передаём контекст
+	err := repo.Update(context.Background(), fakePerson.ID, updatedPerson)
 	tests.MustFailIfError(t, err)
 
 	// Проверяем обновление
-	foundPerson, err := repo.FindByID(fakePerson.ID)
+	foundPerson, err := repo.FindByID(context.Background(), fakePerson.ID)
 	tests.MustFailIfError(t, err)
 
 	if !reflect.DeepEqual(foundPerson, updatedPerson) {
@@ -69,17 +72,17 @@ func TestDeletePerson(t *testing.T) {
 	dbConn := tests.PrepareTestDatabase(t)
 	defer tests.CleanUp(dbConn, t)
 
-	repo := db.NewSqlitePersonRepo(dbConn)
+	repo := db.NewPostgresPersonRepo(dbConn)
 
 	// Вставляем исходную запись
 	fakePerson := tests.InsertFakePerson(dbConn, t)
 
 	// Удаляем запись
-	err := repo.Delete(fakePerson.ID)
+	err := repo.Delete(context.Background(), fakePerson.ID)
 	tests.MustFailIfError(t, err)
 
 	// Пытаемся снова найти удалённую запись
-	_, err = repo.FindByID(fakePerson.ID)
+	_, err = repo.FindByID(context.Background(), fakePerson.ID)
 	if err == nil {
 		t.Error("Deleted record was still found in the database.")
 	}
