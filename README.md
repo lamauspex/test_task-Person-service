@@ -49,7 +49,7 @@
 
 Чтобы запустить проект на своем компьютере, выполните следующие шаги:
 
-1. Клонирование репозитория:
+1. **Клонирование репозитория:**
 ```shell
 git clone https://github.com/lamauspex/Person_service
 ```
@@ -58,13 +58,13 @@ git clone https://github.com/lamauspex/Person_service
 Замените **DB_PASSWORD=YOUR_DB_PASSWORD_HERE** на действующий пароль
 
 
-3. Установка зависимостей:
+3. **Установка зависимостей:**
 ```shell
 go mod download
 ```
 
 
-4. Запуск 
+4. **Запуск**
 ```shell
 go run main.go
 ```
