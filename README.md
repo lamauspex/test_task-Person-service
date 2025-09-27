@@ -16,7 +16,7 @@
 
 - **Framework:** Echo (версия 4.13.4)
 - **Logging:** Uber Zap (версия 1.27.0)
-- **Database:** SQLite (драйвер: mattn/go-sqlite3 версия 1.14.28)
+- **Database:** PostgreSQL
 - **Validation:** Validator (versión 10.27.0)
 - **Documentation:** Swaggo (Swagger UI интеграция для Echo, версия 1.16.4)
 - **Environment Variables Handling:** Godotenv (версия 1.5.1)
