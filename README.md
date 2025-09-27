@@ -54,11 +54,12 @@
 git clone https://github.com/lamauspex/Person_service
 ```
 
-2. В файле .env 
+2. **В файле .env**
+ 
 Замените **DB_PASSWORD=YOUR_DB_PASSWORD_HERE** на действующий пароль
 
 
-3. **Установка зависимостей:**
+4. **Установка зависимостей:**
 ```shell
 go mod download
 ```
