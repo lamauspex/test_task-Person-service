@@ -1,91 +1,158 @@
+# Person Service
 
-# Simple Person Service 
+> RESTful API для управления данными сотрудников на Go
 
-Простой RESTful CRUD-сервис для управления моделью Person с использованием PostgeSQL базы данных и фреймворка Echo.
+![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)
+![Echo](https://img.shields.io/badge/Echo-4.13.4-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-336791?style=flat&logo=postgresql)
+![Swagger](https://img.shields.io/badge/Swagger-Yes-green)
 
+## 🟢 Технологический стек
 
+| Компонент | Технология | Назначение |
+|-----------|------------|------------|
+| Язык | Go 1.21+ | Основной язык разработки |
+| Web-фреймворк | Echo v4 | HTTP-маршрутизация и обработчики |
+| База данных | PostgreSQL | Хранение данных |
+| Логирование | Uber Zap | Структурированное логирование |
+| Валидация | go-playground/validator | Валидация входных данных |
+| Документация | Swaggo/Swagger | Автогенерация API-документации |
+| Конфигурация | Godotenv | Работа с .env файлами |
+| JSON | ByteDance Sonic | Высокопроизводительная сериализация |
 
-## 🟢 Описание проекта 
-Этот проект реализует полный цикл операций над сущностью Person: 
-создание, чтение, обновление и удаление записей. Использует четкую архитектуру с выделением слоев, 
-что позволяет легко поддерживать и расширять приложение.
+## 🟢 Ключевые навыки
 
+- **RESTful API** — проектирование и реализация
+- **Clean Architecture** — разделение на слои (handler → logic → repo)
+- **PostgreSQL** — работа с реляционной БД
+- **Логирование** — структурированные логи с Zap
+- **Валидация данных** — проверка входящих запросов
+- **Docker** — готовность к контейнеризации (опционально)
+- **Swagger** — автоматическая документация API
 
+## 🟢 Возможности
 
-### 🟢 Технологии
+- Создание нового сотрудника (Person)
+- Получение списка всех сотрудников
+- Получение сотрудника по ID
+- Обновление данных сотрудника
+- Удаление сотрудника
+- Валидация входящих данных
+- Логирование всех запросов
+- Swagger-документация
 
-- **Framework:** Echo (версия 4.13.4)
-- **Logging:** Uber Zap (версия 1.27.0)
-- **Database:** PostgreSQL
-- **Validation:** Validator (versión 10.27.0)
-- **Documentation:** Swaggo (Swagger UI интеграция для Echo, версия 1.16.4)
-- **Environment Variables Handling:** Godotenv (версия 1.5.1)
-- **JSON Serialization:** ByteDance Sonic (быстрое JSON кодирование, версия 1.13.3)
-- **Error Management:** MultiErr (версия 1.10.0)
-- **Concurrency Tools:** Modern-Go Concurrent (версия bacd9c7ef1dd)
-- **Performance Optimization:** Valyala bytebufferpool (версия 1.0.0)
+## 🟢 Endpoints
 
+| Метод | Endpoint | Описание |
+|-------|----------|----------|
+| `GET` | `/persons` | Получить всех сотрудников |
+| `GET` | `/persons/:id` | Получить сотрудника по ID |
+| `POST` | `/persons` | Создать нового сотрудника |
+| `PUT` | `/persons/:id` | Обновить сотрудника |
+| `DELETE` | `/persons/:id` | Удалить сотрудника |
 
-### 🟢 Структура приложения 
+## 🟢 Примеры запросов
 
-- **Model:** Представлена структурой Person, содержащей ID, Email, Phone, First Name и Last Name.
-- **Handlers:** HTTP-обработчики реализованы с использованием фреймворка Echo.
-- **Logic:** Реализована логика для каждой операции CRUD.
-- **Repository:** Используется слой доступа к данным, позволяющий абстрагироваться от конкретной СУБД (PostgeSQL).
+### Создание сотрудника
 
-
-
-### 🟢 Доступные endpoints 
-
-- GET	/person/	Получение списка пользователей
-- GET	/person/{id}	Получение конкретного пользователя
-- POST	/person/	Создание новой записи пользователя
-- PUT	/person/{id}	Обновление существующей записи пользователя
-- DELETE	/person/{id}	Удаление записи пользователя
-
-
-
-### 🟢 Установка
-
-Чтобы запустить проект на своем компьютере, выполните следующие шаги:
-
-1. **Клонирование репозитория:**
-```shell
-git clone https://github.com/lamauspex/Person_service
+```bash
+curl -X POST http://localhost:8080/persons \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.doe@example.com",
+    "phone": "+79001234567",
+    "first_name": "John",
+    "last_name": "Doe"
+  }'
 ```
 
-2. **В файле .env**
- 
-Замените **DB_PASSWORD=YOUR_DB_PASSWORD_HERE** на действующий пароль
+### Ответ
 
+```json
+{
+  "id": 1,
+  "email": "john.doe@example.com",
+  "phone": "+79001234567",
+  "first_name": "John",
+  "last_name": "Doe"
+}
+```
 
-4. **Установка зависимостей:**
-```shell
+### Получение списка
+
+```bash
+curl http://localhost:8080/persons
+```
+
+## 🟢 Структура проекта
+
+```
+Person_service/
+├── main.go                    # Точка входа
+├── .env                       # Конфигурация
+├── internal/
+│   ├── app/                   # Модели данных
+│   │   └── person_model.go
+│   ├── http/                  # HTTP-обработчики
+│   │   └── person_handler.go
+│   ├── logic/                 # Бизнес-логика
+│   │   └── person_logic.go
+│   ├── db/                    # Работа с БД
+│   │   └── postgre_person_repo.go
+│   ├── middleware/            # Middleware
+│   │   └── logger_middleware.go
+│   └── tests/                 # Интеграционные тесты
+├── migrations/                # SQL-миграции
+├── docs/                      # Swagger-документация
+└── go.mod / go.sum            # Зависимости
+```
+
+## 🟢 Быстрый старт
+
+```bash
+# Клонирование
+git clone https://github.com/lamauspex/test_task-Person-service
+
+# Переход в директорию
+cd Person_service
+
+# Настройка .env
+# Отредактируйте DB_PASSWORD в файле .env
+
+# Установка зависимостей
 go mod download
-```
 
-
-4. **Запуск**
-```shell
+# Запуск
 go run main.go
 ```
-```shell
-Swagger API http://localhost:8080/swagger/index.html
+
+## 🟢 Документация
+
+После запуска доступна по адресу:
+
+```
+http://localhost:8080/swagger/index.html
 ```
 
+## 🟢 Архитектура
 
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Handler   │ ──► │   Service   │ ──► │ Repository  │
+│   (Echo)    │     │   (Logic)   │     │  (PostgreSQL)│
+└─────────────┘     └─────────────┘     └─────────────┘
+       │                   │                   │
+       ▼                   ▼                   ▼
+  HTTP Request      Business Logic       SQL Queries
+```
 
-Ваш вклад в проект приветствуется! Если вы хотите внести изменения или улучшения, создайте pull request или откройте issue на GitHub.
+- **Handler** — принимает HTTP-запросы, валидирует, передаёт в сервис
+- **Service** — бизнес-логика, обработка данных
+- **Repository** — доступ к базе данных, SQL-запросы
 
-#### Контакты
+---
 
-Если у вас есть вопросы или предложения, не стесняйтесь связаться со мной:
-
-- Имя: Резник Кирилл
-- Email: lamauspex@yandex.ru
-- GitHub: https://github.com/lamauspex
-- Telegram: @lamauspex
-
-Спасибо за интерес к проекту! Надеюсь, он будет полезен в вашей работе в цифровом маркетинге.
-
-
+**Автор**: Резник Кирилл  
+**Email**: lamauspex@yandex.ru  
+**Telegram**: @lamauspex  
+**GitHub**: https://github.com/lamauspex
