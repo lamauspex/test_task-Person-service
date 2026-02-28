@@ -137,10 +137,10 @@ http://localhost:8080/swagger/index.html
 ## 🟢 Архитектура
 
 ```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Handler   │ ──► │   Service   │ ──► │ Repository  │
+┌─────────────┐     ┌─────────────┐     ┌──────────────┐
+│   Handler   │ ──► │   Service   │ ──► │ Repository   │
 │   (Echo)    │     │   (Logic)   │     │  (PostgreSQL)│
-└─────────────┘     └─────────────┘     └─────────────┘
+└─────────────┘     └─────────────┘     └──────────────┘
        │                   │                   │
        ▼                   ▼                   ▼
   HTTP Request      Business Logic       SQL Queries
